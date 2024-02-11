@@ -1,3 +1,5 @@
+import 'package:app/widgets/button.dart';
+import 'package:app/widgets/currency_code.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,20 +13,21 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Color(0xFF181818),
-        body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40),
+        backgroundColor: const Color(0xFF181818),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 80),
+                const SizedBox(height: 80),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
+                        const Text(
                           'Hey, Selena',
                           style: TextStyle(
                               color: Colors.white,
@@ -42,7 +45,7 @@ class App extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Text(
@@ -52,7 +55,7 @@ class App extends StatelessWidget {
                     color: Colors.white.withOpacity(0.8),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Text('\$5 194 482',
@@ -61,24 +64,71 @@ class App extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: Colors.white.withOpacity(0.8),
                     )),
-                Row(
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(45),
-                            color: Colors.amber),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 20),
-                          child: Text(
-                            'Transfer',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        )),
+                    Button(
+                      text: 'Transfer',
+                      textColor: Colors.black,
+                      bgColor: Colors.amber,
+                    ),
+                    Button(
+                      text: 'Request',
+                      textColor: Colors.white,
+                      bgColor: Color(0xFF1F2123),
+                    )
                   ],
-                )
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Wallets',
+                        style: TextStyle(
+                            fontSize: 36,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        'View All',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                    ]),
+                const SizedBox(
+                  height: 20,
+                ),
+                const CurrencyCode(
+                    name: 'EURO',
+                    amount: '6 248',
+                    code: 'EUR',
+                    icon: Icons.euro_outlined,
+                    isInverted: false,
+                    order: 1),
+                const CurrencyCode(
+                    name: 'Bitcoin',
+                    amount: '9 234',
+                    code: 'BTC',
+                    icon: Icons.currency_bitcoin_outlined,
+                    isInverted: true,
+                    order: 2),
+                const CurrencyCode(
+                    name: 'Dollar',
+                    amount: '6 248',
+                    code: 'USD',
+                    icon: Icons.attach_money_rounded,
+                    isInverted: false,
+                    order: 3),
               ],
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }
