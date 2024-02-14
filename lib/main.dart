@@ -1,8 +1,10 @@
+import 'package:app/services/api_services.dart';
 import 'package:app/widgets/button.dart';
 import 'package:app/widgets/currency_code.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  ApiServices().getTodaysToons();
   runApp(const App());
 }
 
