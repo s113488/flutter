@@ -9,17 +9,26 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  static const int twentyFiveMinutes = 1500;
-  int totalsecons = twentyFiveMinutes;
+  static int twentyFiveMinutes = 1500;
+  static int totalsecons = twentyFiveMinutes;
   late Timer timer;
   bool isRunning = false;
   int totalPomodoro = 0;
+  int cyclePomodoro = 0;
+  final int boundarytotal = 4;
+  final int boundarycycle = 12;
 
   void onClick(Timer timer) {
     if (totalsecons == 0) {
       setState(() {
         isRunning = false;
-        totalPomodoro += 1;
+        if (totalPomodoro < boundarytotal - 1) {
+          totalPomodoro += 1;
+        } else {
+          totalPomodoro = 0;
+          cyclePomodoro += 1;
+        }
+
         totalsecons = twentyFiveMinutes;
       });
       timer.cancel();
@@ -57,6 +66,13 @@ class _HomescreenState extends State<Homescreen> {
     return time.toString().split('.').first.substring(2, 7);
   }
 
+  void onSettingTime(int settingtime) {
+    onResetPressed();
+    setState(() {
+      totalsecons = settingtime;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,21 +80,39 @@ class _HomescreenState extends State<Homescreen> {
       body: Column(
         children: [
           Flexible(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                format(totalsecons),
-                style: TextStyle(
-                  color: Theme.of(context).cardColor,
-                  fontSize: 89,
-                  fontWeight: FontWeight.w600,
+            flex: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    format(totalsecons),
+                    style: TextStyle(
+                      color: Theme.of(context).cardColor,
+                      fontSize: 89,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SelectTime(settingtime: 15),
+                      SelectTime(settingtime: 20),
+                      SelectTime(settingtime: 25),
+                      SelectTime(settingtime: 30),
+                      SelectTime(settingtime: 35),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
           Flexible(
-            flex: 3,
+            flex: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -102,41 +136,100 @@ class _HomescreenState extends State<Homescreen> {
             flex: 1,
             child: Row(
               children: [
-                Expanded(
-                  child: Container(
-                    decoration:
-                        BoxDecoration(color: Theme.of(context).cardColor),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Pomodoros',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge!
-                                  .color),
-                        ),
-                        Text(
-                          '$totalPomodoro',
-                          style: TextStyle(
-                              fontSize: 58,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge!
-                                  .color),
-                        ),
-                      ],
-                    ),
-                  ),
+                CountCycle(
+                  istotal: true,
+                  totalPomodoro: totalPomodoro,
+                  cyclePomodoro: cyclePomodoro,
+                  boundarycycle: boundarycycle,
+                  boundarytotal: boundarytotal,
+                ),
+                CountCycle(
+                  istotal: false,
+                  totalPomodoro: totalPomodoro,
+                  cyclePomodoro: cyclePomodoro,
+                  boundarycycle: boundarycycle,
+                  boundarytotal: boundarytotal,
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SelectTime extends StatelessWidget {
+  const SelectTime({super.key, required this.settingtime});
+  final int settingtime;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(width: 4, color: Theme.of(context).cardColor)),
+        child: InkWell(
+          onTap: () {
+            _HomescreenState.totalsecons = settingtime * 60;
+          },
+          child: Center(
+            child: Text(
+              '$settingtime',
+              style: TextStyle(
+                  color: Theme.of(context).cardColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+        ));
+  }
+}
+
+// ignore: must_be_immutable
+class CountCycle extends StatelessWidget {
+  CountCycle({
+    super.key,
+    required this.istotal,
+    required this.totalPomodoro,
+    required this.cyclePomodoro,
+    required this.boundarytotal,
+    required this.boundarycycle,
+  });
+  int totalPomodoro;
+  int cyclePomodoro;
+  final int boundarytotal;
+  final int boundarycycle;
+  final bool istotal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(color: Theme.of(context).cardColor),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              istotal ? 'ROUND' : 'GOAL',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).textTheme.headlineLarge!.color),
+            ),
+            Text(
+              istotal
+                  ? '$totalPomodoro/$boundarytotal'
+                  : '$cyclePomodoro/$boundarycycle',
+              style: TextStyle(
+                  fontSize: 58,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).textTheme.headlineLarge!.color),
+            ),
+          ],
+        ),
       ),
     );
   }
